@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Environment & database
+.env
+database.sqlite
+uploads/*
+!uploads/.gitkeep
+
+# Build artifacts
+dist/
+build/
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db

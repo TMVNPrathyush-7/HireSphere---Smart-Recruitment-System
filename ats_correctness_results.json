@@ -1,0 +1,87 @@
+{
+  "T1 - Baseline": {
+    "ats_score": 91,
+    "passed_checks": [
+      "Parsing Compatibility: Verified contact headers and social/code profile links.",
+      "Section Structure: Clear chronological division across summary, skills, projects, and education.",
+      "Keyword Density: High alignment (4 of 5 required technical skills matched).",
+      "Content Completeness: Accredited education with grades and structured project records documented."
+    ],
+    "issues_flagged": [
+      "Formatting & Readability: Descriptions lack quantifiable numbers or action verbs."
+    ],
+    "details": {
+      "format_rating": "Very Good",
+      "parsing_confidence": "High",
+      "total_skills_detected": 10
+    }
+  },
+  "T2 - No summary": {
+    "ats_score": 87,
+    "passed_checks": [
+      "Parsing Compatibility: Verified contact headers and social/code profile links.",
+      "Section Structure: Clear chronological division across summary, skills, projects, and education.",
+      "Keyword Density: High alignment (4 of 5 required technical skills matched).",
+      "Content Completeness: Accredited education with grades and structured project records documented."
+    ],
+    "issues_flagged": [
+      "Formatting & Readability: Descriptions lack quantifiable numbers or action verbs."
+    ],
+    "details": {
+      "format_rating": "Very Good",
+      "parsing_confidence": "High",
+      "total_skills_detected": 10
+    }
+  },
+  "T3 - Missing sections": {
+    "ats_score": 68,
+    "passed_checks": [
+      "Parsing Compatibility: Verified contact headers and social/code profile links.",
+      "Keyword Density: High alignment (4 of 5 required technical skills matched)."
+    ],
+    "issues_flagged": [
+      "Section Structure: Missing standard resume sections.",
+      "Content Completeness: Project or academic records lack descriptions or metrics.",
+      "Formatting & Readability: Descriptions lack quantifiable numbers or action verbs."
+    ],
+    "details": {
+      "format_rating": "Poor",
+      "parsing_confidence": "High",
+      "total_skills_detected": 10
+    }
+  },
+  "T4 - Low skill alignment": {
+    "ats_score": 75,
+    "passed_checks": [
+      "Parsing Compatibility: Verified contact headers and social/code profile links.",
+      "Section Structure: Clear chronological division across summary, skills, projects, and education.",
+      "Content Completeness: Accredited education with grades and structured project records documented."
+    ],
+    "issues_flagged": [
+      "Keyword Density: Missing target competencies for this specific role.",
+      "Formatting & Readability: Descriptions lack quantifiable numbers or action verbs."
+    ],
+    "details": {
+      "format_rating": "Needs Improvement",
+      "parsing_confidence": "High",
+      "total_skills_detected": 3
+    }
+  },
+  "T5 - Improved profile": {
+    "ats_score": 93,
+    "passed_checks": [
+      "Parsing Compatibility: Verified contact headers and social/code profile links.",
+      "Section Structure: Clear chronological division across summary, skills, projects, and education.",
+      "Keyword Density: High alignment (5 of 5 required technical skills matched).",
+      "Content Completeness: Accredited education with grades and structured project records documented."
+    ],
+    "issues_flagged": [
+      "Formatting & Readability: Descriptions lack quantifiable numbers or action verbs."
+    ],
+    "details": {
+      "format_rating": "Very Good",
+      "parsing_confidence": "High",
+      "total_skills_detected": 11
+    }
+  }
+}

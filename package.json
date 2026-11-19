@@ -1,0 +1,11 @@
+{
+  "name": "smart-recruitment-platform-root",
+  "version": "1.0.0",
+  "description": "B.Tech Final Year Capstone: Smart Recruitment & Hiring Platform (AI-Augmented ATS & Matching)",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:ai": "cd ai-service && python -m uvicorn app.main:app --reload --port 8000",
+    "seed": "cd backend && npm run seed"
+  }
+}

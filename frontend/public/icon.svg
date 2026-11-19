@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#4f46e5" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  <!-- App Background -->
+  <rect width="512" height="512" rx="128" fill="url(#grad)" filter="url(#shadow)" />
+  
+  <!-- Subtle Internal Glow Overlay -->
+  <rect width="512" height="512" rx="128" fill="none" stroke="white" stroke-opacity="0.15" stroke-width="4" />
+
+  <!-- Main AI Sparkles Emblem -->
+  <g fill="white" transform="translate(136, 120) scale(10)">
+    <!-- Primary 4-pointed Star -->
+    <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="white" />
+    <!-- Secondary Small Star Top Right -->
+    <path d="M19 2L20.2 5.8L24 7L20.2 8.2L19 12L17.8 8.2L14 7L17.8 5.8L19 2Z" fill="#c7d2fe" opacity="0.9" />
+  </g>
+</svg>
+
