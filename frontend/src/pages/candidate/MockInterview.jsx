@@ -487,8 +487,8 @@ export function MockInterview() {
 
   // --- Interactive Mode: Submit Response to Alex ---
   const handleInteractiveSubmit = async () => {
-    if (!candidateInput || candidateInput.trim().length < 10) {
-      alert('Please formulate a technical response or explanation before submitting to the interviewer.');
+    if (!candidateInput || candidateInput.trim().length < 15) {
+      alert('Please formulate a substantive technical response (at least 15 characters). Alex evaluates technical depth, modularity, and trade-offs.');
       return;
     }
 
@@ -541,7 +541,9 @@ export function MockInterview() {
         ]);
         speakText(debriefSnippet);
       } else {
-        setInteractiveTurn((prev) => prev + 1);
+        if (res.advance_turn !== false) {
+          setInteractiveTurn((prev) => prev + 1);
+        }
         setCurrentAlexPrompt(res.next_question);
         setCurrentAlexFeedback(res.feedback_snippet || '');
         setInteractiveHistory((prev) => [
@@ -1213,18 +1215,27 @@ export function MockInterview() {
                   )}
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                <div className="flex flex-wrap items-center justify-between text-[11px] gap-2">
                   <span>
                     {!speechSupported ? (
                       <span className="text-amber-600 font-medium flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         Firefox restricts browser speech recognition. Type your answer or switch to Chrome/Edge.
                       </span>
+                    ) : candidateInput.trim().length > 0 && candidateInput.trim().length < 25 ? (
+                      <span className="text-amber-600 font-semibold flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        Response is brief. Alex evaluates technical depth, modularity, and trade-offs (~2-3 sentences recommended).
+                      </span>
                     ) : (
-                      'Pro-tip: Highlight trade-offs, potential failure points, and data boundaries.'
+                      <span className="text-slate-400">
+                        Pro-tip: Highlight trade-offs, potential failure points, and component data boundaries.
+                      </span>
                     )}
                   </span>
-                  <span>{candidateInput.split(/\s+/).filter(Boolean).length} words</span>
+                  <span className={`font-medium ${candidateInput.trim().length > 0 && candidateInput.trim().length < 25 ? 'text-amber-600' : 'text-slate-400'}`}>
+                    {candidateInput.split(/\s+/).filter(Boolean).length} words ({candidateInput.trim().length} chars)
+                  </span>
                 </div>
 
                 {/* Submit to Alex Action */}
@@ -1232,8 +1243,8 @@ export function MockInterview() {
                   <button
                     type="button"
                     onClick={handleInteractiveSubmit}
-                    disabled={isWaitingForAlex || !candidateInput.trim()}
-                    className="px-6 py-3 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md shadow-brand-500/25 disabled:opacity-50"
+                    disabled={isWaitingForAlex || !candidateInput.trim() || candidateInput.trim().length < 15}
+                    className="px-6 py-3 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md shadow-brand-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isWaitingForAlex ? (
                       <>

@@ -132,6 +132,7 @@ class InteractiveInterviewTurnResponse(BaseModel):
     feedback_snippet: Optional[str] = ""
     next_question: Optional[str] = ""
     is_final: bool = False
+    advance_turn: Optional[bool] = True
     final_evaluation: Optional[InteractiveFinalEvaluation] = None
 
 

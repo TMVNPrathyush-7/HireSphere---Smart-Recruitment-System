@@ -270,24 +270,37 @@ Candidate's Latest Response:
 "{latest_answer}"
 
 Instructions:
-1. Briefly acknowledge their response (1 concise sentence with professional feedback on what they did well or missed).
-2. Ask an incisive, realistic follow-up challenge drilling directly into an architectural edge case, scaling bottleneck, concurrency problem, cache invalidation, or trade-off from what they just answered.
+1. Evaluate whether the candidate's latest response genuinely attempts to answer the technical question asked.
+   - IF the response is merely an introduction or greeting (e.g., "hi", "my name is...", "hello"), evasive, gibberish, "I don't know", "skip", or lacks ANY technical/architectural substance:
+     * DO NOT fabricate praise or pretend they discussed architecture or components.
+     * Set "advance_turn": false
+     * Set "feedback_snippet": A polite, professional course-correction addressing them (e.g., "Nice to meet you! However, this round is a technical deep-dive into your system design.")
+     * Set "next_question": Re-prompt or guide them directly to answer the question with a helpful prompt (e.g., "Could you walk me through the overall architecture, tech stack, and primary database flow of your project to get started?")
+   - IF the candidate provided a real technical explanation:
+     * Set "advance_turn": true
+     * Set "feedback_snippet": 1 concise sentence with authentic technical feedback (evaluating their actual points, trade-offs, or gaps).
+     * Set "next_question": An incisive follow-up challenge drilling directly into an architectural edge case, scaling bottleneck, concurrency problem, cache invalidation, or failure mode based on what they just explained.
 Do not ask generic trivia questions. Make it feel like an authentic conversation with a principal engineer.
 
 Return JSON strictly matching:
 {{
   "interviewer_name": "Alex (Staff Technical Lead)",
-  "feedback_snippet": "1 sentence technical acknowledgement",
-  "next_question": "Direct, sharp technical follow-up challenge",
+  "feedback_snippet": "1 sentence technical acknowledgement or polite course-correction",
+  "next_question": "Direct, sharp technical follow-up challenge or guidance re-prompt",
+  "advance_turn": true,
   "is_final": false
 }}
 Return ONLY valid JSON."""
                     res = await LlmClient.generate_json(prompt, "You are an expert technical interviewer. Return valid JSON only.")
                     if res and isinstance(res, dict) and res.get("next_question"):
+                        adv_turn = res.get("advance_turn", True)
+                        if isinstance(adv_turn, str):
+                            adv_turn = adv_turn.lower() == "true"
                         return {
                             "interviewer_name": res.get("interviewer_name", "Alex (Staff Technical Lead)"),
                             "feedback_snippet": res.get("feedback_snippet", "Good articulation of the technical principles."),
                             "next_question": res.get("next_question", ""),
+                            "advance_turn": bool(adv_turn),
                             "is_final": False,
                             "final_evaluation": None
                         }
@@ -350,27 +363,45 @@ Return ONLY valid JSON."""
                 print(f"[InterviewService] Interactive turn LLM failed: {e}")
 
         # Intelligent Fallback Flow (Grounded in Resume & Real Engineering)
+        clean_ans = latest_answer.strip().lower()
+        greeting_markers = ["hi", "hello", "hey", "name", "my name is", "i am", "good morning", "skip", "pass", "dont know", "don't know"]
+        is_non_substantive = len(clean_ans) < 20 and (any(m in clean_ans for m in greeting_markers) or len(clean_ans.split()) <= 4)
+
+        if is_non_substantive and turn < total_turns:
+            name_match = re.search(r"(?:my name is|i am|i'm|name:?)\s+([a-zA-Z]+)", latest_answer, re.IGNORECASE)
+            name_suffix = f", {name_match.group(1).capitalize()}" if name_match else ""
+            return {
+                "interviewer_name": interviewer_label,
+                "feedback_snippet": f"Nice to meet you{name_suffix}! However, this round is a technical deep-dive into your system design.",
+                "next_question": "To properly evaluate your engineering approach: could you walk me through the overall architecture, tech stack, and primary data flow of your project to begin?",
+                "advance_turn": False,
+                "is_final": False,
+                "final_evaluation": None
+            }
+
         if turn == 2:
             return {
-                "interviewer_name": "Alex (Staff Technical Lead)",
+                "interviewer_name": interviewer_label,
                 "feedback_snippet": "Solid reasoning on modular boundaries and service flow.",
                 "next_question": (
                     f"Building on that: Suppose your primary database or queue experiences a 3x traffic spike, "
                     f"causing connection timeouts while {secondary_skill} processes background tasks. "
                     f"How do you implement backpressure, circuit breaking, and idempotency to ensure no data is lost or duplicated?"
                 ),
+                "advance_turn": True,
                 "is_final": False,
                 "final_evaluation": None
             }
         elif turn == 3 and not is_last_turn:
             return {
-                "interviewer_name": "Alex (Staff Technical Lead)",
+                "interviewer_name": interviewer_label,
                 "feedback_snippet": "Great explanation on fault isolation and queue management.",
                 "next_question": (
                     f"Let's touch on production observability and diagnostics: "
                     f"When latency spikes (p99 exceeds SLA limits) in an asynchronous distributed workflow, "
                     f"what metrics, distributed tracing tools, and profiling techniques do you use to pinpoint whether the bottleneck is CPU, I/O, or database lock contention?"
                 ),
+                "advance_turn": True,
                 "is_final": False,
                 "final_evaluation": None
             }

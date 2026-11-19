@@ -326,6 +326,24 @@ export class AiProxyService {
     const topProject = projects[0] && typeof projects[0] === 'object' ? projects[0] : null;
     const topExp = experience[0] && typeof experience[0] === 'object' ? experience[0] : null;
 
+    const latestAnswer = candidateAnswers[candidateAnswers.length - 1] || '';
+    const cleanAns = latestAnswer.trim().toLowerCase();
+    const greetingMarkers = ['hi', 'hello', 'hey', 'name', 'my name is', 'i am', 'good morning', 'skip', 'pass', 'dont know', "don't know", 'test'];
+    const isNonSubstantive = cleanAns.length < 20 && (greetingMarkers.some(m => cleanAns.includes(m)) || cleanAns.split(/\s+/).length <= 4);
+
+    if (isNonSubstantive && turn > 1 && turn < total_turns) {
+      const nameMatch = latestAnswer.match(/(?:my name is|i am|i'm|name:?)\s+([a-zA-Z]+)/i);
+      const nameSuffix = nameMatch ? `, ${nameMatch[1]}` : '';
+      return {
+        interviewer_name: interviewerLabel,
+        feedback_snippet: `Nice to meet you${nameSuffix}! However, this round is a technical deep-dive into your system design.`,
+        next_question: `To properly evaluate your engineering approach: could you walk me through the overall architecture, tech stack, and primary data flow of your featured project to begin?`,
+        advance_turn: false,
+        is_final: false,
+        final_evaluation: null
+      };
+    }
+
     if (turn <= 1 && candidateAnswers.length === 0) {
       let openingQ = '';
       if (topProject) {
@@ -377,6 +395,7 @@ export class AiProxyService {
         interviewer_name: interviewerLabel,
         feedback_snippet: 'Solid points on component separation and service boundaries.',
         next_question: q2,
+        advance_turn: true,
         is_final: false,
         final_evaluation: null
       };
@@ -387,6 +406,7 @@ export class AiProxyService {
         interviewer_name: interviewerLabel,
         feedback_snippet: 'Great explanation of fault isolation and message semantics.',
         next_question: `Let's discuss production diagnostics: When latency spikes (p99 exceeds SLA limits) in a high-throughput microservice, what metrics, distributed tracing tools, and profiling techniques do you use to determine whether the bottleneck is CPU, I/O, or database lock contention?`,
+        advance_turn: true,
         is_final: false,
         final_evaluation: null
       };
